@@ -1,0 +1,25 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+  {% set currentYear = "" %}
+  <section class="archive">
+    {% for post in collections.publishedPosts | reverse %}
+      {% set postYear = post.date.getFullYear() %}
+      {% if currentYear != postYear %}
+        {% if currentYear != "" %}
+        </ol>
+        {% endif %}
+      <div class="year">
+        <h1>{{ postYear }}</h1>
+      </div>
+      <ol>
+      {% set currentYear = postYear %}
+      {% endif %}
+      <li>
+        <h2><a href="{{ post.url }}#main"><span>{{ post.data.title }}</span></a></h2>
+        <p>{{ post.date | monthDayDate }} by {{ post.data.author }}</p>
+      </li>
+    {% endfor %}
+    </ol>
+  </section>
+{% endblock %}

@@ -1,0 +1,22 @@
+<svg version="1.1" viewBox="0 0 100 56.17" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <clipPath id="clipPath968-6-5-6-1-35">
+      <rect x="33.389" y="118.12" width="15.875" height="9.7165" fill="#a6ffff" fill-opacity=".15726"/>
+    </clipPath>
+    <filter id="filter918-5-7-2-2-2" color-interpolation-filters="sRGB">
+      <feGaussianBlur result="blur" stdDeviation="0.01 0.11"/>
+    </filter>
+    <clipPath id="clipPath1539-4-3-0-1">
+      <path d="m94.809 134.06v7.9375h-15.875v-7.9375c0.79375 0 0.79375 0 6.6146 3.4396h2.6458c5.8208-3.4396 5.8208-3.4396 6.6146-3.4396z" fill="#d6f4e1" fill-opacity=".41366"/>
+    </clipPath>
+    <filter id="filter1537-5-7-9-14" color-interpolation-filters="sRGB">
+      <feGaussianBlur result="blur" stdDeviation="0.01 0.01"/>
+    </filter>
+  </defs>
+  <g transform="translate(465.67 130.07)">
+    <path transform="matrix(-6.2992 0 0 6.4332 -155.34 -896.29)" d="m49.264 119.9v7.9375h-15.875v-7.9375c0.79375 0 0.79375 0 6.6146 3.4396h2.6458c5.8208-3.4396 5.8208-3.4396 6.6146-3.4396z" clip-path="url(#clipPath968-6-5-6-1-35)" fill-opacity=".15726" filter="url(#filter918-5-7-2-2-2)"/>
+    <path d="m-465.67-124.96v51.064h100v-51.064c-5 0-5 0-41.667 22.128h-16.667c-36.667-22.128-36.667-22.128-41.667-22.128z" fill="#fbf4e1"/>
+    <path transform="matrix(-6.2992 0 0 6.4332 131.55 -987.38)" d="m78.934 141.99c0-1.5875 0-1.5875 6.6146-4.4979 0.79375 0 1.8521 1e-5 2.6458 0 6.6146 2.9104 6.6146 2.9104 6.6146 4.4979z" clip-path="url(#clipPath1539-4-3-0-1)" fill-opacity=".35" filter="url(#filter1537-5-7-9-14)" style="mix-blend-mode:normal"/>
+    <path d="m-365.67-73.898c0-10.213 0-10.213-41.667-28.936-5 0-11.667 6e-5 -16.667 0-41.667 18.723-41.667 18.723-41.667 28.936z" fill="#fbf4e1"/>
+  </g>
+</svg>

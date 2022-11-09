@@ -1,0 +1,47 @@
+backend:
+  name: github
+  branch: <branch>
+  repo: <owner>/<repo>
+  base_url: https://<backend-app-name>-<resource-suffix>.azurewebsites.net
+
+site_url: <domain>
+display_url: <domain>
+
+local_backend: true
+
+media_folder: "assets/img"
+public_folder: "/assets/img"
+
+collections:
+
+  - label: "Blog"
+    name: "blog"
+    folder: "posts"
+    create: true
+    slug: "{{author}}-{{title}}"
+    summary: "{{date}} by {{author}}: \"{{title}}\""
+    view_groups:
+      - label: Author
+        field: author
+      - label: Published
+        field: published
+    fields:
+      - { label: "Layout", name: "layout", widget: "hidden", default: "layouts/post.njk" }
+      - { label: "Published?", name: "published", widget: "boolean", default: false }
+      - { label: "Date", name: "date", widget: "datetime", date_format: 'YYYY-MM-DD', time_format: false, format: 'YYYY-MM-DD', picker_utc: true }
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Subtitle", name: "subtitle", widget: "string" }
+      - { label: "Tags", name: "tags", widget: "hidden", default: ["post"] }
+      - { label: "Body", name: "body", widget: "markdown", buttons: ["bold", "italic", "link", "heading-two", "heading-three", "heading-four", "heading-five", "quote", "bulleted-list", "numbered-list"], editor_components: ["separator", "image"] }
+      - { label: "Signoff", name: "signoff", widget: "string" }
+      - { label: "Author", name: "author", widget: "string" }
+      
+  - label: "Pages"
+    name: "pages"
+    files:
+      - label: "About Page"
+        name: "about"
+        file: "about.md"
+        fields:
+          - { label: "Layout", name: "layout", widget: "hidden", default: "layouts/about.njk" }
+          - { label: "Body", name: "body", widget: "markdown", buttons: ["bold", "italic", "link", "heading-two", "heading-three", "heading-four", "heading-five", "quote", "bulleted-list", "numbered-list"], editor_components: ["separator", "image"] }

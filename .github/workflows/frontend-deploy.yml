@@ -1,0 +1,93 @@
+name: Deploy Frontend Resources and Code
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**'
+      - '!.github/workflows/**'
+      - '.github/workflows/frontend-deploy.yml'
+      - '!_site/**'
+      - '!azure/**'
+      - 'azure/frontend.bicep'
+      - '!oauthfunc/**'
+      - '!README.md'
+
+  # allows manual trigger in Actions
+  workflow_dispatch:
+    inputs:
+      deployResources:
+        description: 'Deploy Azure resources'
+        type: boolean
+        required: true
+        default: true
+      deployCode:
+        description: 'Deploy static site code'
+        type: boolean
+        required: true
+        default: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: checkout the repo
+        uses: actions/checkout@v3
+
+      - name: create file change filters
+        uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            resources:
+              - 'azure/frontend.bicep'
+      
+      - name: load .env file
+        uses: xom9ikk/dotenv@v2
+        with:
+          mode: deployment
+
+      - name: log into azure
+        uses: Azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_DEPLOY_CREDENTIALS }}
+
+      - name: create resource group
+        uses: Azure/cli@1.0.4
+        if: steps.filter.outputs.resources == 'true' || (github.event_name == 'workflow_dispatch' && inputs.deployResources)
+        with:
+          inlineScript: az group create -n ${{ env.RESOURCE_GROUP_NAME }} -l ${{ env.RESOURCE_GROUP_REGION }}
+      
+      - name: deploy frontend static site bicep template
+        uses: Azure/arm-deploy@v1
+        if: steps.filter.outputs.resources == 'true' || (github.event_name == 'workflow_dispatch' && inputs.deployResources)
+        with:
+          scope: resourcegroup
+          deploymentMode: Incremental
+          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          resourceGroupName: ${{ env.RESOURCE_GROUP_NAME }}
+          template: './azure/frontend.bicep'
+          parameters: appName=${{ env.FRONTEND_APP_NAME }} appNameSuffix=${{ env.RESOURCE_SUFFIX }} repository=${{ github.repository }} branch=${{ github.ref_name }}
+          failOnStdErr: false
+
+      - name: get static site deployment token
+        if: github.event_name != 'workflow_dispatch' || inputs.deployCode
+        id: static_site_deployment_token
+        run: |
+          echo "TOKEN=$(az staticwebapp secrets list -g ${{ env.RESOURCE_GROUP_NAME }} -n ${{ env.FRONTEND_APP_NAME }}-${{ env.RESOURCE_SUFFIX }} --query "properties.apiKey" | tr -d '"')" >> $GITHUB_OUTPUT
+
+      - name: build and deploy to azure static web app
+        uses: Azure/static-web-apps-deploy@v1
+        if: github.event_name != 'workflow_dispatch' || inputs.deployCode
+        with:
+          azure_static_web_apps_api_token: ${{ steps.static_site_deployment_token.outputs.TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: "upload"
+          # https://aka.ms/swaworkflowconfig
+          app_location: "/"
+          output_location: "_site"
+          app_build_command: "npm run build"
+

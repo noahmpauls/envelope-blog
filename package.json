@@ -1,0 +1,20 @@
+{
+  "name": "envelope-blog",
+  "version": "1.0.0",
+  "description": "A static site with a snail mail theme.",
+  "main": "index.js",
+  "devDependencies": {
+    "@11ty/eleventy": "^1.0.1",
+    "luxon": "^2.4.0"
+  },
+  "scripts": {
+    "build": "node clear.js && npx @11ty/eleventy",
+    "serve": "npx @11ty/eleventy --serve",
+    "preview": "npx http-server -p 8089 ./_site",
+    "local-cms": "npx netlify-cms-proxy-server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Noah Pauls",
+  "license": "ISC"
+}

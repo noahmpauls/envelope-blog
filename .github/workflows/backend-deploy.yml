@@ -1,0 +1,87 @@
+name: Deploy Backend Resources and Code
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/backend-deploy.yml
+      - azure/backend.bicep
+      - oauthfunc/**
+
+  # allows manual trigger in Actions
+  workflow_dispatch:
+    inputs:
+      deployResources:
+        description: 'Deploy Azure resources'
+        type: boolean
+        required: true
+        default: true
+      deployCode:
+        description: 'Deploy function app code'
+        type: boolean
+        required: true
+        default: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: checkout the repo
+        uses: actions/checkout@v3
+
+      - name: create file change filters
+        uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            resources:
+              - 'azure/backend.bicep'
+            code:
+              - 'oauthfunc/**'
+      
+      - name: load .env file
+        uses: xom9ikk/dotenv@v2
+        with:
+          mode: deployment
+
+      - name: log into azure
+        uses: Azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_DEPLOY_CREDENTIALS }}
+
+      - name: create resource group
+        uses: Azure/cli@1.0.4
+        if: steps.filter.outputs.resources == 'true' || (github.event_name == 'workflow_dispatch' && inputs.deployResources)
+        with:
+          inlineScript: az group create -n ${{ env.RESOURCE_GROUP_NAME }} -l ${{ env.RESOURCE_GROUP_REGION }}
+      
+      - name: deploy backend function app bicep template
+        uses: Azure/arm-deploy@v1
+        if: steps.filter.outputs.resources == 'true' || (github.event_name == 'workflow_dispatch' && inputs.deployResources)
+        with:
+          scope: resourcegroup
+          deploymentMode: Incremental
+          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          resourceGroupName: ${{ env.RESOURCE_GROUP_NAME }}
+          template: './azure/backend.bicep'
+          parameters: appName=${{ env.BACKEND_APP_NAME }} appNameSuffix=${{ env.RESOURCE_SUFFIX }} oauthClientId=${{ secrets.OAUTH_CLIENT_ID }} oauthClientSecret=${{ secrets.OAUTH_CLIENT_SECRET }} origin=${{ env.DOMAIN }} redirectUrl=https://${{ env.BACKEND_APP_NAME }}-${{ env.RESOURCE_SUFFIX }}.azurewebsites.net/callback
+          failOnStdErr: false
+
+      - name: install oauth function app packages
+        if: steps.filter.outputs.code == 'true' || (github.event_name == 'workflow_dispatch' && inputs.deployCode)
+        run: |
+          cd ./oauthfunc
+          npm ci
+      
+      - name: deploy oauthfunc code
+        uses: Azure/functions-action@v1.3.1
+        if: steps.filter.outputs.code == 'true' || (github.event_name == 'workflow_dispatch' && inputs.deployCode)
+        with:
+          app-name: ${{ env.BACKEND_APP_NAME }}-${{ env.RESOURCE_SUFFIX }}
+          package: ./oauthfunc
+          scm-do-build-during-deployment: true
+          enable-oryx-build: true
+

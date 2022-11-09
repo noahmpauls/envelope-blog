@@ -1,0 +1,48 @@
+---
+pagination: 
+  data: collections.publishedPosts
+  size: 5
+  reverse: true
+  alias: newestPosts
+permalink: "{% if pagination.pageNumber > 0 %}page/{{ pagination.pageNumber + 1}}/{% endif %}index.html"
+---
+
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+  {% for post in newestPosts %}
+    <div class="envelope">
+      <article class="letter">
+      	<header>
+          <h2><a href="{{ post.url }}#main">{{ post.data.title | addNbsp }}</a></h2>
+          <p>{{ post.data.subtitle | addNbsp }}</p>
+          <p class="date">{{ post.date | postPreviewDate }}</p>
+      	</header>
+        <div class="preview" aria-hidden="true">
+          {{ post.templateContent | excerpt }}
+        </div>
+      </article>  
+    </div>
+  {% endfor %}
+  {% if pagination.pages.length > 1 %}
+  <ol class="pagination">
+    {% if pagination.href.previous %}
+      <a href="{{ pagination.href.previous }}"><li>⯇</li></a>
+    {% else %}
+      <li class="current">⯇</li>
+    {% endif %}
+    {%- for pageEntry in pagination.pages | reverse %}
+      {% if page.url == pagination.hrefs[ loop.index0 ] %}
+        <li class="current">{{ loop.index }}</li>
+      {% else %}
+        <a href="{{ pagination.hrefs[ loop.index0 ] }}"><li>{{ loop.index }}</li></a>
+      {% endif %}
+    {%- endfor %}
+    {% if pagination.href.next %}
+      <a href="{{ pagination.href.next }}"><li>⯈</li></a>
+    {% else %}
+      <li class="current">⯈</li>
+    {% endif %}
+  </ol>
+  {% endif %}
+{% endblock %}
