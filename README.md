@@ -73,8 +73,8 @@ backend:
   repo: <github repository owner/identifier; e.g. 'noahmpauls/mywebsiterepo'>
   base_url: https://<BACKEND_APP_NAME>-<RESOURCE_SUFFIX>.azurewebsites.net
 
-site_url: <DOMAIN>
-display_url: <DOMAIN>
+site_url: https://<domain>
+display_url: https://<domain>
 ```
 
 ### 6. Run your first successful builds

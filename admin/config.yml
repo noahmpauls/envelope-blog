@@ -4,8 +4,8 @@ backend:
   repo: <owner>/<repo>
   base_url: https://<backend-app-name>-<resource-suffix>.azurewebsites.net
 
-site_url: <domain>
-display_url: <domain>
+site_url: https://<domain>
+display_url: https://<domain>
 
 local_backend: true
 
