@@ -4,8 +4,8 @@
   "description": "A static site with a snail mail theme.",
   "main": "index.js",
   "devDependencies": {
-    "@11ty/eleventy": "^1.0.1",
-    "luxon": "^2.4.0"
+    "@11ty/eleventy": "^2.0.0-beta.2",
+    "luxon": "^2.5.2"
   },
   "scripts": {
     "build": "node clear.js && npx @11ty/eleventy",
