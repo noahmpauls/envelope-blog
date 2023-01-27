@@ -1,6 +1,10 @@
 # Envelope Blog
 
+<img src="./readme/example.png" alt="Example envelope blog homepage" width=700>
+
 A static blog with a snail mail theme, powered by 11ty and Netlify CMS. Deployed on Azure by GitHub Actions.
+
+[**Click here for a demo version of the site!**](https://noahmpauls.github.io/envelope-blog/)
 
 ## Development Guide
 
